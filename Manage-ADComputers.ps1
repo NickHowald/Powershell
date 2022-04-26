@@ -28,7 +28,17 @@ $Computers | Export-Csv C:\Temp\InactiveComputers.csv -NoTypeInformation
 #-------------------------------
 # INACTIVE COMPUTER MANAGEMENT
 #-------------------------------
-# Below are two options to manage the inactive computers that have been found. Either disable them, or delete them. Select the option that is most appropriate for your requirements:
+# Below are three options to manage the inactive computers that have been found. Either disable them, or delete them. Select the option that is most appropriate for your requirements:
+
+# Disable and move Computer
+$TargetPath="OU=Likely non-existent computers - to investigate,OU=Computers,OU=District Computers,DC=sd8,DC=bc,DC=ca"
+ForEach ($Item in $Computers){
+  $DistName = $Item.DistinguishedName
+  Set-ADComputer -Identity $DistName -Enabled $false
+  Move-ADObject –Identity $DistName -TargetPath $TargetPath
+  Get-ADComputer -Filter { DistinguishedName -eq $DistName } | Select-Object Name, Enabled
+}
+
 
 # Disable Inactive Computers
 ForEach ($Item in $Computers){
